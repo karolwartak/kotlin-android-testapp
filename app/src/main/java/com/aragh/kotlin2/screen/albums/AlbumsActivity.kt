@@ -4,20 +4,21 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.ViewGroup
 import com.aragh.kotlin2.R
-import com.aragh.kotlin2.api.AlbumsRepo
+import com.aragh.kotlin2.actors.Albums
+import com.aragh.kotlin2.actors.GetUserAlbums
 import com.aragh.kotlin2.component.Adapter
 import com.aragh.kotlin2.component.ViewHolder
 import com.aragh.kotlin2.data.Album
 import com.aragh.kotlin2.extensions.inflate
 import kotlinx.android.synthetic.main.activity_albums.*
 import kotlinx.android.synthetic.main.element_album.view.*
+import kotlinx.coroutines.experimental.CompletableDeferred
 import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import org.koin.android.ext.android.inject
 
@@ -35,10 +36,9 @@ class AlbumsActivity : AppCompatActivity() {
   }
 
 
-  private val albumsRepo: AlbumsRepo by inject()
-  private val albums: MutableList<Album> = mutableListOf()
+  private val albums: Albums by inject()
   private val clickListener: (Album) -> Unit = { }
-  private val adapter = AlbumsAdapter(albums, clickListener)
+  private val adapter = AlbumsAdapter(clickListener)
 
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,20 +52,16 @@ class AlbumsActivity : AppCompatActivity() {
   override fun onStart() {
     super.onStart()
     launch(Unconfined) {
-      val channel = albumsRepo.getUserAlbumsChannel(intent.getIntExtra(USER_ID_EXTRA, 0))
-      channel.consumeEach {
-        albums.add(it)
-        delay(100)
-        runOnUiThread { adapter.notifyItemInserted(adapter.itemCount) }
-      }
+      val albumsDeferred = CompletableDeferred<List<Album>>()
+      albums.userAlbumsActor.offer(GetUserAlbums(intent.getIntExtra(USER_ID_EXTRA, 0), albumsDeferred))
+      val albums = albumsDeferred.await()
+      runOnUiThread { adapter.submitList(albums) }
     }
   }
 
   override fun onStop() {
     super.onStop()
-    val size = albums.size
-    albums.clear()
-    adapter.notifyItemRangeRemoved(0, size)
+    adapter.submitList(null)
   }
 }
 
@@ -79,7 +75,12 @@ class AlbumViewHolder(userView: View) : ViewHolder<Album>(userView) {
   }
 }
 
-class AlbumsAdapter(albums: MutableList<Album>, clickListener: (Album) -> Unit) : Adapter<Album>(albums, clickListener) {
+class AlbumsAdapter(clickListener: (Album) -> Unit) : Adapter<Album>(AlbumDiffCallback(), clickListener) {
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
       AlbumViewHolder(parent.inflate(R.layout.element_album))
+}
+
+class AlbumDiffCallback : DiffUtil.ItemCallback<Album>() {
+  override fun areItemsTheSame(oldItem: Album?, newItem: Album?) = oldItem?.id == newItem?.id
+  override fun areContentsTheSame(oldItem: Album?, newItem: Album?) = oldItem == newItem
 }
