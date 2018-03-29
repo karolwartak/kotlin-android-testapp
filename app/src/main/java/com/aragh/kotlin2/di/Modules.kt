@@ -1,9 +1,9 @@
 package com.aragh.kotlin2.di
 
+import com.aragh.kotlin2.actors.Albums
+import com.aragh.kotlin2.actors.Users
 import com.aragh.kotlin2.api.AlbumsApi
-import com.aragh.kotlin2.api.AlbumsRepo
 import com.aragh.kotlin2.api.UsersApi
-import com.aragh.kotlin2.api.UsersRepo
 import org.koin.dsl.module.applicationContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -17,7 +17,7 @@ val usersModule = applicationContext {
         .build()
   }
   factory { get<Retrofit>().create(UsersApi::class.java) }
-  factory { UsersRepo(get()) }
+  factory { Users(get()) }
   factory { get<Retrofit>().create(AlbumsApi::class.java) }
-  factory { AlbumsRepo(get()) }
+  factory { Albums(get()) }
 }
