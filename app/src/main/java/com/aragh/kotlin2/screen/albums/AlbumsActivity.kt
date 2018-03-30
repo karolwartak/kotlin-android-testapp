@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import com.aragh.kotlin2.R
 import com.aragh.kotlin2.actors.Albums
 import com.aragh.kotlin2.actors.GetUserAlbums
+import com.aragh.kotlin2.actors.PostUserAlbum
 import com.aragh.kotlin2.component.Adapter
 import com.aragh.kotlin2.component.ViewHolder
 import com.aragh.kotlin2.data.Album
@@ -39,6 +40,9 @@ class AlbumsActivity : AppCompatActivity() {
   private val albums: Albums by inject()
   private val clickListener: (Album) -> Unit = { }
   private val adapter = AlbumsAdapter(clickListener)
+  private val userId: Int by lazy {
+    intent.getIntExtra(USER_ID_EXTRA, 0)
+  }
 
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,21 +51,36 @@ class AlbumsActivity : AppCompatActivity() {
 
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.adapter = adapter
+
+    fab.setOnClickListener { addAlbum() }
   }
 
   override fun onStart() {
     super.onStart()
-    launch(Unconfined) {
-      val albumsDeferred = CompletableDeferred<List<Album>>()
-      albums.userAlbumsActor.offer(GetUserAlbums(intent.getIntExtra(USER_ID_EXTRA, 0), albumsDeferred))
-      val albums = albumsDeferred.await()
-      runOnUiThread { adapter.submitList(albums) }
-    }
+    loadAlbums()
   }
 
   override fun onStop() {
     super.onStop()
     adapter.submitList(null)
+  }
+
+  private fun loadAlbums() {
+    launch(Unconfined) {
+      val albumsDeferred = CompletableDeferred<List<Album>>()
+      albums.userAlbumsActor.offer(GetUserAlbums(userId, albumsDeferred))
+      val albums = albumsDeferred.await()
+      runOnUiThread { adapter.submitList(albums) }
+    }
+  }
+
+  private fun addAlbum() {
+    launch(Unconfined) {
+      val responseDeferred = CompletableDeferred<Album>()
+      albums.userAlbumsActor.offer(PostUserAlbum(userId, "new", responseDeferred))
+      val newAlbum = responseDeferred.await()
+      runOnUiThread { adapter.addItem(newAlbum) } //will not add more than 1 since they are equal in DiffUtil
+    }
   }
 }
 

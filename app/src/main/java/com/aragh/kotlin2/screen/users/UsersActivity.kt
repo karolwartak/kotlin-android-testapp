@@ -41,7 +41,12 @@ class UsersActivity : AppCompatActivity() {
       val usersDeferred = CompletableDeferred<List<User>>()
       usersRepo.usersActor.offer(GetUsers(usersDeferred))
       val users = usersDeferred.await()
-      runOnUiThread { adapter.submitList(users) }
+      runOnUiThread {
+        adapter.submitList(users)
+      }
+//      usersDeferred.invokeOnCompletion {
+//        runOnUiThread { adapter.submitList(usersDeferred.getCompleted()) }
+//      }
     }
   }
 
