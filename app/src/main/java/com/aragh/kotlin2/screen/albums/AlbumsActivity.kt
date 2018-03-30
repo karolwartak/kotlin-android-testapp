@@ -68,16 +68,17 @@ class AlbumsActivity : AppCompatActivity() {
   private fun loadAlbums() {
     launch(Unconfined) {
       val albumsDeferred = CompletableDeferred<List<Album>>()
-      albums.userAlbumsActor.offer(GetUserAlbums(userId, albumsDeferred))
-      val albums = albumsDeferred.await()
-      runOnUiThread { adapter.submitList(albums) }
+      albums.userAlbumsActor.send(GetUserAlbums(userId, albumsDeferred))
+      albumsDeferred.invokeOnCompletion {
+        runOnUiThread { adapter.submitList(albumsDeferred.getCompleted()) }
+      }
     }
   }
 
   private fun addAlbum() {
     launch(Unconfined) {
       val responseDeferred = CompletableDeferred<Album>()
-      albums.userAlbumsActor.offer(PostUserAlbum(userId, "new", responseDeferred))
+      albums.userAlbumsActor.send(PostUserAlbum(userId, "new", responseDeferred))
       val newAlbum = responseDeferred.await()
       runOnUiThread { adapter.addItem(newAlbum) } //will not add more than 1 since they are equal in DiffUtil
     }
