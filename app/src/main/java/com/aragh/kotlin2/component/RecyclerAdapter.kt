@@ -15,7 +15,7 @@ abstract class Adapter<Item>(
     private val clickListener: (Item) -> Unit
 ) : ListAdapter<Item, ViewHolder<Item>>(diffCallback) {
 
-  private var items = mutableListOf<Item>()
+  private val items = mutableListOf<Item>()
 
   override fun onBindViewHolder(holder: ViewHolder<Item>, position: Int) =
       holder.bind(getItem(position), clickListener)
