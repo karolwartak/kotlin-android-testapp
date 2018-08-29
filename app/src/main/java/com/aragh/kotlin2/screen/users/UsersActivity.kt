@@ -10,10 +10,11 @@ import com.aragh.kotlin2.R
 import com.aragh.kotlin2.actors.GetUsers
 import com.aragh.kotlin2.actors.Users
 import com.aragh.kotlin2.component.Adapter
+import com.aragh.kotlin2.component.ClickAction
 import com.aragh.kotlin2.component.ViewHolder
 import com.aragh.kotlin2.data.User
 import com.aragh.kotlin2.extensions.inflate
-import com.aragh.kotlin2.screen.albums.AlbumsActivity
+import com.aragh.kotlin2.screen.useralbums.UserAlbumsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.element_user.view.*
 import kotlinx.coroutines.experimental.CompletableDeferred
@@ -21,38 +22,33 @@ import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.launch
 import org.koin.android.ext.android.inject
 
-class UsersActivity : AppCompatActivity() {
+class UsersActivity : AppCompatActivity(), Viewer {
 
-  private val usersRepo: Users by inject()
-  private val clickListener: (User) -> Unit = { user -> goToAlbums(user.id) }
+  private val presenter: Presenter by inject()
+  private val clickListener: ClickAction<User> = { presenter.onUserClick(it.id) }
   private val adapter = UsersAdapter(clickListener)
+
+
+  override fun showUsers(users: List<User>) {
+    adapter.submitList(users)
+  }
+
+  override fun goToUserAlbums(userId: Int) {
+    startActivity(UserAlbumsActivity.intent(this, userId))
+  }
+
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
-
+    presenter.viewer = this
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.adapter = adapter
   }
 
   override fun onStart() {
     super.onStart()
-    launch(Unconfined) {
-      val usersDeferred = CompletableDeferred<List<User>>()
-      usersRepo.usersActor.send(GetUsers(usersDeferred))
-      usersDeferred.invokeOnCompletion {
-        runOnUiThread { adapter.submitList(usersDeferred.getCompleted()) }
-      }
-    }
-  }
-
-  override fun onStop() {
-    super.onStop()
-    adapter.submitList(null)
-  }
-
-  private fun goToAlbums(userId: Int) {
-    startActivity(AlbumsActivity.intent(this, userId))
+    presenter.onStart()
   }
 }
 

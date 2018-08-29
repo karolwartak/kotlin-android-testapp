@@ -1,4 +1,4 @@
-package com.aragh.kotlin2.screen.albums
+package com.aragh.kotlin2.screen.useralbums
 
 import android.content.Context
 import android.content.Intent
@@ -9,79 +9,68 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.ViewGroup
 import com.aragh.kotlin2.R
-import com.aragh.kotlin2.actors.Albums
-import com.aragh.kotlin2.actors.GetUserAlbums
-import com.aragh.kotlin2.actors.PostUserAlbum
 import com.aragh.kotlin2.component.Adapter
+import com.aragh.kotlin2.component.ClickAction
 import com.aragh.kotlin2.component.ViewHolder
 import com.aragh.kotlin2.data.Album
 import com.aragh.kotlin2.extensions.inflate
+import com.aragh.kotlin2.screen.albumdetails.AlbumDetailsActivity
 import kotlinx.android.synthetic.main.activity_albums.*
 import kotlinx.android.synthetic.main.element_album.view.*
-import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.launch
 import org.koin.android.ext.android.inject
 
 
-class AlbumsActivity : AppCompatActivity() {
+class UserAlbumsActivity : AppCompatActivity(), Viewer {
 
   companion object {
     private const val USER_ID_EXTRA = "userId"
 
     fun intent(context: Context, userId : Int) : Intent {
-      val intent = Intent(context, AlbumsActivity::class.java)
+      val intent = Intent(context, UserAlbumsActivity::class.java)
       intent.putExtra(USER_ID_EXTRA, userId)
       return intent
     }
   }
 
 
-  private val albums: Albums by inject()
-  private val clickListener: (Album) -> Unit = { }
+  private val presenter: Presenter by inject()
+  private val clickListener: ClickAction<Album> = { presenter.onAlbumClick(it.id) }
   private val adapter = AlbumsAdapter(clickListener)
   private val userId: Int by lazy {
     intent.getIntExtra(USER_ID_EXTRA, 0)
   }
 
 
+  override fun showAlbums(albums: List<Album>) {
+    adapter.submitList(albums)
+  }
+
+  override fun appendAlbum(album: Album) {
+    adapter.addItem(album)
+  }
+
+  override fun goToDetails(albumId: Int) {
+    startActivity(AlbumDetailsActivity.intent(this, albumId))
+  }
+
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_albums)
-
+    presenter.viewer = this
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.adapter = adapter
-
-    fab.setOnClickListener { addAlbum() }
+    fab.setOnClickListener { presenter.onAddAlbumClick(userId) }
   }
 
   override fun onStart() {
     super.onStart()
-    loadAlbums()
+    presenter.onStart(userId)
   }
 
-  override fun onStop() {
-    super.onStop()
-    adapter.submitList(null)
-  }
-
-  private fun loadAlbums() {
-    launch(Unconfined) {
-      val albumsDeferred = CompletableDeferred<List<Album>>()
-      albums.userAlbumsActor.send(GetUserAlbums(userId, albumsDeferred))
-      albumsDeferred.invokeOnCompletion {
-        runOnUiThread { adapter.submitList(albumsDeferred.getCompleted()) }
-      }
-    }
-  }
-
-  private fun addAlbum() {
-    launch(Unconfined) {
-      val responseDeferred = CompletableDeferred<Album>()
-      albums.userAlbumsActor.send(PostUserAlbum(userId, "new", responseDeferred))
-      val newAlbum = responseDeferred.await()
-      runOnUiThread { adapter.addItem(newAlbum) } //will not add more than 1 since they are equal in DiffUtil
-    }
+  override fun onDestroy() {
+    presenter.viewer = null
+    super.onDestroy()
   }
 }
 

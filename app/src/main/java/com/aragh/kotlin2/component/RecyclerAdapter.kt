@@ -6,9 +6,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 
 
+typealias ClickAction<T> = (T) -> Unit
+
+
 abstract class ViewHolder<Item>(view: View) : RecyclerView.ViewHolder(view) {
   abstract fun bind(item: Item, clickListener: (Item) -> Unit)
 }
+
 
 abstract class Adapter<Item>(
     diffCallback: DiffUtil.ItemCallback<Item>,
