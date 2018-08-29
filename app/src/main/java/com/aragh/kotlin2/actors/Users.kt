@@ -12,7 +12,8 @@ class Users(private val usersApi: UsersApi) {
   val usersActor = actor<UsersMessage> {
     for (msg in channel) {
       when (msg) {
-        is GetUsers -> msg.response.complete(usersApi.users().execute().body() ?: emptyList())
+        is GetUsers -> msg.response.complete(usersApi.users().get() ?: emptyList())
+        //TODO error handling
       }
     }
   }
