@@ -3,6 +3,7 @@ package com.aragh.kotlin2.screen.useralbums
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
@@ -42,11 +43,21 @@ class UserAlbumsActivity : AppCompatActivity(), Viewer {
 
 
   override fun showAlbums(albums: List<Album>) {
+    errorTv.visibility = View.GONE
     adapter.submitList(albums)
+  }
+
+  override fun showError(msg: String?) {
+    errorTv.visibility = View.VISIBLE
+    errorTv.text = msg
   }
 
   override fun appendAlbum(album: Album) {
     adapter.addItem(album)
+  }
+
+  override fun showErrorSnackbar(msg: String?) {
+    Snackbar.make(recyclerView, msg ?: "Error", Snackbar.LENGTH_SHORT)
   }
 
   override fun goToDetails(albumId: Int) {
@@ -66,6 +77,11 @@ class UserAlbumsActivity : AppCompatActivity(), Viewer {
   override fun onStart() {
     super.onStart()
     presenter.onStart(userId)
+  }
+
+  override fun onStop() {
+    adapter.submitList(null)
+    super.onStop()
   }
 
   override fun onDestroy() {

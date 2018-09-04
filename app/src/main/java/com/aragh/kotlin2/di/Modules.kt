@@ -1,8 +1,8 @@
 package com.aragh.kotlin2.di
 
-import com.aragh.kotlin2.actors.Albums
-import com.aragh.kotlin2.actors.UserAlbums
-import com.aragh.kotlin2.actors.Users
+import com.aragh.kotlin2.interactor.Albums
+import com.aragh.kotlin2.interactor.UserAlbums
+import com.aragh.kotlin2.interactor.Users
 import com.aragh.kotlin2.api.AlbumsApi
 import com.aragh.kotlin2.api.UserAlbumsApi
 import com.aragh.kotlin2.api.UsersApi

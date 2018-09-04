@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.aragh.kotlin2.R
-import com.aragh.kotlin2.actors.GetUsers
-import com.aragh.kotlin2.actors.Users
 import com.aragh.kotlin2.component.Adapter
 import com.aragh.kotlin2.component.ClickAction
 import com.aragh.kotlin2.component.ViewHolder
@@ -17,9 +16,6 @@ import com.aragh.kotlin2.extensions.inflate
 import com.aragh.kotlin2.screen.useralbums.UserAlbumsActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.element_user.view.*
-import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.launch
 import org.koin.android.ext.android.inject
 
 class UsersActivity : AppCompatActivity(), Viewer {
@@ -30,7 +26,13 @@ class UsersActivity : AppCompatActivity(), Viewer {
 
 
   override fun showUsers(users: List<User>) {
+    errorTv.visibility = View.GONE
     adapter.submitList(users)
+  }
+
+  override fun showError(msg: String?) {
+    errorTv.visibility = View.VISIBLE
+    errorTv.text = msg
   }
 
   override fun goToUserAlbums(userId: Int) {

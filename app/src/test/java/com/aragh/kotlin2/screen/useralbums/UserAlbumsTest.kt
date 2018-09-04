@@ -1,9 +1,10 @@
 package com.aragh.kotlin2.screen.useralbums
 
-import com.aragh.kotlin2.actors.UserAlbums
+import com.aragh.kotlin2.interactor.UserAlbums
 import com.aragh.kotlin2.api.UserAlbumsApi
 import com.aragh.kotlin2.data.Album
 import com.aragh.kotlin2.data.NewAlbum
+import kotlinx.coroutines.experimental.Unconfined
 import okhttp3.Headers
 import org.junit.Before
 import org.junit.Test
@@ -18,7 +19,7 @@ class UserAlbumsTest {
   val viewMock = mock(Viewer::class.java)
   val userAlbumsApi = mock(UserAlbumsApi::class.java)
   val userAlbums = UserAlbums(userAlbumsApi)
-  val presenter = UserAlbumsPresenter(userAlbums)
+  val presenter = UserAlbumsPresenter(userAlbums, Unconfined)
 
 
   @Before
@@ -49,7 +50,7 @@ class UserAlbumsTest {
   @Test
   fun addAlbumClickCreatesAlbum() {
     `when`(userAlbumsApi.postAlbum(1, NewAlbum("new"))).thenReturn(
-        CompletableFuture.completedFuture(Response.success(null, Headers.of("location", "/100"))))
+        CompletableFuture.completedFuture(Response.success(Unit, Headers.of("location", "/100"))))
     presenter.onAddAlbumClick(1)
     verify(viewMock, after(50).times(1)).appendAlbum(Album(100, "new"))
   }

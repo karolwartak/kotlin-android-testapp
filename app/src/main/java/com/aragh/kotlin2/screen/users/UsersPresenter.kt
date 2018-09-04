@@ -1,14 +1,15 @@
 package com.aragh.kotlin2.screen.users
 
-import com.aragh.kotlin2.actors.GetUsers
-import com.aragh.kotlin2.actors.Users
-import com.aragh.kotlin2.data.User
-import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Unconfined
+import com.aragh.kotlin2.interactor.Users
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
+import kotlin.coroutines.experimental.CoroutineContext
 
 
-class UsersPresenter(private val users: Users) : Presenter {
+class UsersPresenter(private val users: Users,
+                     private val coroutineContext: CoroutineContext = UI) : Presenter {
   override var viewer: Viewer? = null
     set(value) {
       field = value
@@ -17,12 +18,11 @@ class UsersPresenter(private val users: Users) : Presenter {
 
 
   override fun onStart() {
-    launch(Unconfined) {
-      val usersDeferred = CompletableDeferred<List<User>>()
-      users.usersActor.send(GetUsers(usersDeferred))
-      usersDeferred.invokeOnCompletion {
-        viewer?.showUsers(usersDeferred.getCompleted())
+    launch(this@UsersPresenter.coroutineContext) {
+      val users = withContext(CommonPool) {
+        users.getAllUsers()
       }
+      viewer?.showUsers(users)
     }
   }
 

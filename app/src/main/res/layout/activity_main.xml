@@ -12,4 +12,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>
 
+  <TextView
+    android:id="@+id/errorTv"
+    android:gravity="center"
+    android:textSize="30dp"
+    android:textColor="@android:color/holo_red_dark"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:text="Error"/>
+
 </android.support.constraint.ConstraintLayout>

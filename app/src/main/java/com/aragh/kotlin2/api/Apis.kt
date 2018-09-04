@@ -3,7 +3,6 @@ package com.aragh.kotlin2.api
 import com.aragh.kotlin2.data.Album
 import com.aragh.kotlin2.data.NewAlbum
 import com.aragh.kotlin2.data.User
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -23,7 +22,7 @@ interface UserAlbumsApi {
   fun userAlbums(@Path("id") userId: Int) : CompletableFuture<List<Album>>
 
   @POST("/users/{id}/albums")
-  fun postAlbum(@Path("id") userId: Int, @Body album: NewAlbum) : CompletableFuture<Response<Nothing>>
+  fun postAlbum(@Path("id") userId: Int, @Body album: NewAlbum) : CompletableFuture<Response<Unit?>>
 }
 
 
