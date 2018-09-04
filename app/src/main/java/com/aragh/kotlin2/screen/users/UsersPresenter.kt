@@ -1,16 +1,16 @@
 package com.aragh.kotlin2.screen.users
 
 import com.aragh.kotlin2.interactor.Users
-import kotlinx.coroutines.experimental.CommonPool
+import com.aragh.kotlin2.screen.CoroutinePresenter
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
 import kotlin.coroutines.experimental.CoroutineContext
 
 
 class UsersPresenter(private val users: Users,
-                     private val coroutineContext: CoroutineContext = UI) : Presenter {
-  override var viewer: Viewer? = null
+                     coroutineContext: CoroutineContext = UI)
+  : CoroutinePresenter(coroutineContext), PresenterContract {
+
+  override var view: ViewContract? = null
     set(value) {
       field = value
       value?.showUsers(emptyList())
@@ -18,15 +18,14 @@ class UsersPresenter(private val users: Users,
 
 
   override fun onStart() {
-    launch(this@UsersPresenter.coroutineContext) {
-      val users = withContext(CommonPool) {
-        users.getAllUsers()
-      }
-      viewer?.showUsers(users)
-    }
+    runInCoroutine(
+        { users.getAllUsers() },
+        { view?.showUsers(it) },
+        {}
+    )
   }
 
   override fun onUserClick(userId: Int) {
-    viewer?.goToUserAlbums(userId)
+    view?.goToUserAlbums(userId)
   }
 }

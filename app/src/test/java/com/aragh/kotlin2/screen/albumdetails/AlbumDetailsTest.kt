@@ -12,14 +12,14 @@ import java.util.concurrent.CompletableFuture
 
 class AlbumDetailsTest {
 
-  val viewMock = mock(Viewer::class.java)
+  val viewMock = mock(ViewContract::class.java)
   val albumsApi = mock(AlbumsApi::class.java)
   val albums = Albums(albumsApi)
   val presenter = AlbumDetailsPresenter(albums, Unconfined)
 
   @Before
   fun setupViewer() {
-    presenter.viewer = viewMock
+    presenter.view = viewMock
   }
 
   @Test

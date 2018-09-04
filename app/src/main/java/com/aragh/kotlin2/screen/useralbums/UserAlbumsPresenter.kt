@@ -1,17 +1,16 @@
 package com.aragh.kotlin2.screen.useralbums
 
 import com.aragh.kotlin2.interactor.UserAlbums
-import kotlinx.coroutines.experimental.CommonPool
+import com.aragh.kotlin2.screen.CoroutinePresenter
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
 import kotlin.coroutines.experimental.CoroutineContext
 
 
 class UserAlbumsPresenter(private val userAlbums: UserAlbums,
-                          private val coroutineContext: CoroutineContext = UI) : Presenter {
+                          coroutineContext: CoroutineContext = UI)
+  : CoroutinePresenter(coroutineContext), PresenterContract {
 
-  override var viewer: Viewer? = null
+  override var view: ViewContract? = null
     set(value) {
       field = value
       value?.showAlbums(emptyList())
@@ -19,32 +18,22 @@ class UserAlbumsPresenter(private val userAlbums: UserAlbums,
 
 
   override fun onStart(userId: Int) {
-    launch(this@UserAlbumsPresenter.coroutineContext) {
-      try {
-        val albums = withContext(CommonPool) {
-          userAlbums.getUserAlbums(userId)
-        }
-        viewer?.showAlbums(albums)
-      } catch (e: Exception) {
-        viewer?.showError(e.message)
-      }
-    }
+    runInCoroutine(
+        { userAlbums.getUserAlbums(userId) },
+        { view?.showAlbums(it) },
+        { view?.showError(it.message) }
+    )
   }
 
   override fun onAlbumClick(albumId: Int) {
-    viewer?.goToDetails(albumId)
+    view?.goToDetails(albumId)
   }
 
   override fun onAddAlbumClick(userId: Int) {
-    launch(this@UserAlbumsPresenter.coroutineContext) {
-      try {
-        val album = withContext(CommonPool) {
-          userAlbums.postUserAlbum(userId, "new")
-        }
-        viewer?.appendAlbum(album)
-      } catch (e: Exception) {
-        viewer?.showErrorSnackbar(e.message)
-      }
-    }
+    runInCoroutine(
+        { userAlbums.postUserAlbum(userId, "new") },
+        { view?.appendAlbum(it) },
+        { view?.showErrorSnackbar(it.message) }
+    )
   }
 }

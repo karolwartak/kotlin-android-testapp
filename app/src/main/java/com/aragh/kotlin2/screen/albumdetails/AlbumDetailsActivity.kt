@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.activity_albumdetails.*
 import org.koin.android.ext.android.inject
 
 
-class AlbumDetailsActivity : AppCompatActivity(), Viewer {
+class AlbumDetailsActivity : AppCompatActivity(), ViewContract {
 
   companion object {
     private const val ALBUM_ID_EXTRA = "albumId"
@@ -24,7 +24,7 @@ class AlbumDetailsActivity : AppCompatActivity(), Viewer {
   }
 
 
-  private val presenter: Presenter by inject()
+  private val presenter: PresenterContract by inject()
   private val constraintStart: ConstraintSet by lazy {
     ConstraintSet().apply {
       clone(root)
@@ -62,7 +62,7 @@ class AlbumDetailsActivity : AppCompatActivity(), Viewer {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_albumdetails)
-    presenter.viewer = this
+    presenter.view = this
     imageView.setOnClickListener { presenter.onCoverClick() }
   }
 
@@ -73,7 +73,7 @@ class AlbumDetailsActivity : AppCompatActivity(), Viewer {
 
   override fun onDestroy() {
     imageView.setOnClickListener(null)
-    presenter.viewer = null
+    presenter.view = null
     super.onDestroy()
   }
 }

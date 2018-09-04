@@ -7,7 +7,7 @@ import com.aragh.kotlin2.api.AlbumsApi
 import com.aragh.kotlin2.api.UserAlbumsApi
 import com.aragh.kotlin2.api.UsersApi
 import com.aragh.kotlin2.screen.albumdetails.AlbumDetailsPresenter
-import com.aragh.kotlin2.screen.albumdetails.Presenter
+import com.aragh.kotlin2.screen.albumdetails.PresenterContract
 import com.aragh.kotlin2.screen.useralbums.UserAlbumsPresenter
 import com.aragh.kotlin2.screen.users.UsersPresenter
 import org.koin.dsl.module.applicationContext
@@ -32,12 +32,12 @@ val usersModule = applicationContext {
   bean { Albums(get()) }
 
   context("albumDetails") {
-    bean<Presenter> { AlbumDetailsPresenter(get()) }
+    bean<PresenterContract> { AlbumDetailsPresenter(get()) }
   }
   context("userAlbums") {
-    bean<com.aragh.kotlin2.screen.useralbums.Presenter> { UserAlbumsPresenter(get()) }
+    bean<com.aragh.kotlin2.screen.useralbums.PresenterContract> { UserAlbumsPresenter(get()) }
   }
   context("users") {
-    bean<com.aragh.kotlin2.screen.users.Presenter> { UsersPresenter(get()) }
+    bean<com.aragh.kotlin2.screen.users.PresenterContract> { UsersPresenter(get()) }
   }
 }

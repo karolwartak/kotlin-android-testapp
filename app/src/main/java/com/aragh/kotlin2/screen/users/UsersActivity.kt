@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.aragh.kotlin2.R
@@ -14,13 +13,13 @@ import com.aragh.kotlin2.component.ViewHolder
 import com.aragh.kotlin2.data.User
 import com.aragh.kotlin2.extensions.inflate
 import com.aragh.kotlin2.screen.useralbums.UserAlbumsActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_users.*
 import kotlinx.android.synthetic.main.element_user.view.*
 import org.koin.android.ext.android.inject
 
-class UsersActivity : AppCompatActivity(), Viewer {
+class UsersActivity : AppCompatActivity(), ViewContract {
 
-  private val presenter: Presenter by inject()
+  private val presenter: PresenterContract by inject()
   private val clickListener: ClickAction<User> = { presenter.onUserClick(it.id) }
   private val adapter = UsersAdapter(clickListener)
 
@@ -42,8 +41,8 @@ class UsersActivity : AppCompatActivity(), Viewer {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
-    presenter.viewer = this
+    setContentView(R.layout.activity_users)
+    presenter.view = this
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.adapter = adapter
   }
