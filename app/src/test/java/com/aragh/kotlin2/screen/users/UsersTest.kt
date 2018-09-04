@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture
 
 class UsersTest {
 
-  val mockViewer = mock(Viewer::class.java)
+  val mockViewer = mock(ViewContract::class.java)
   val usersApi = mock(UsersApi::class.java)
   val users = Users(usersApi)
   val presenter = UsersPresenter(users, Unconfined)
@@ -21,7 +21,7 @@ class UsersTest {
 
   @Before
   fun setupViewer() {
-    presenter.viewer = mockViewer
+    presenter.view = mockViewer
   }
 
   @Test

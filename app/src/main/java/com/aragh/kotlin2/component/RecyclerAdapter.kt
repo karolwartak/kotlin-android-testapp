@@ -16,7 +16,7 @@ abstract class ViewHolder<Item>(view: View) : RecyclerView.ViewHolder(view) {
 
 abstract class Adapter<Item>(
     diffCallback: DiffUtil.ItemCallback<Item>,
-    private val clickListener: (Item) -> Unit
+    private val clickListener: ClickAction<Item>
 ) : ListAdapter<Item, ViewHolder<Item>>(diffCallback) {
 
   private val items = mutableListOf<Item>()

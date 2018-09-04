@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.element_album.view.*
 import org.koin.android.ext.android.inject
 
 
-class UserAlbumsActivity : AppCompatActivity(), Viewer {
+class UserAlbumsActivity : AppCompatActivity(), ViewContract {
 
   companion object {
     private const val USER_ID_EXTRA = "userId"
@@ -34,7 +34,7 @@ class UserAlbumsActivity : AppCompatActivity(), Viewer {
   }
 
 
-  private val presenter: Presenter by inject()
+  private val presenter: PresenterContract by inject()
   private val clickListener: ClickAction<Album> = { presenter.onAlbumClick(it.id) }
   private val adapter = AlbumsAdapter(clickListener)
   private val userId: Int by lazy {
@@ -68,7 +68,7 @@ class UserAlbumsActivity : AppCompatActivity(), Viewer {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_albums)
-    presenter.viewer = this
+    presenter.view = this
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.adapter = adapter
     fab.setOnClickListener { presenter.onAddAlbumClick(userId) }
@@ -85,7 +85,7 @@ class UserAlbumsActivity : AppCompatActivity(), Viewer {
   }
 
   override fun onDestroy() {
-    presenter.viewer = null
+    presenter.view = null
     super.onDestroy()
   }
 }
