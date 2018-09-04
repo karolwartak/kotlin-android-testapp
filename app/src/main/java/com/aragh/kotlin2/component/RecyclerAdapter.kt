@@ -32,6 +32,6 @@ abstract class Adapter<Item>(
 
   fun addItem(item: Item) {
     items.add(item)
-    super.submitList(items)
+    super.submitList(ArrayList(items)) //TODO pojebana akcja, albo musi się dać lepiej albo trzeba ten ListAdapter wypierdolić
   }
 }
