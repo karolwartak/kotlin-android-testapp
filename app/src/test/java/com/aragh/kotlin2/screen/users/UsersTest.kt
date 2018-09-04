@@ -1,8 +1,9 @@
 package com.aragh.kotlin2.screen.users
 
-import com.aragh.kotlin2.actors.Users
 import com.aragh.kotlin2.api.UsersApi
 import com.aragh.kotlin2.data.User
+import com.aragh.kotlin2.interactor.Users
+import kotlinx.coroutines.experimental.Unconfined
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers
@@ -15,7 +16,7 @@ class UsersTest {
   val mockViewer = mock(Viewer::class.java)
   val usersApi = mock(UsersApi::class.java)
   val users = Users(usersApi)
-  val presenter = UsersPresenter(users)
+  val presenter = UsersPresenter(users, Unconfined)
 
 
   @Before

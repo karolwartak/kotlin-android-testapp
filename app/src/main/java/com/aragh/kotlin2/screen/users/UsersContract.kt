@@ -5,6 +5,7 @@ import com.aragh.kotlin2.data.User
 
 interface Viewer {
   fun showUsers(users: List<User>)
+  fun showError(msg: String?)
   fun goToUserAlbums(userId: Int)
 }
 

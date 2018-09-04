@@ -1,8 +1,9 @@
 package com.aragh.kotlin2.screen.albumdetails
 
-import com.aragh.kotlin2.actors.Albums
+import com.aragh.kotlin2.interactor.Albums
 import com.aragh.kotlin2.api.AlbumsApi
 import com.aragh.kotlin2.data.Album
+import kotlinx.coroutines.experimental.Unconfined
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
@@ -14,7 +15,7 @@ class AlbumDetailsTest {
   val viewMock = mock(Viewer::class.java)
   val albumsApi = mock(AlbumsApi::class.java)
   val albums = Albums(albumsApi)
-  val presenter = AlbumDetailsPresenter(albums)
+  val presenter = AlbumDetailsPresenter(albums, Unconfined)
 
   @Before
   fun setupViewer() {
@@ -40,7 +41,7 @@ class AlbumDetailsTest {
   fun errorGetsDisplayedOnException() {
     `when`(albumsApi.album(1)).thenAnswer { CompletableFuture<Album>().apply { completeExceptionally(RuntimeException()) } }
     presenter.onStart(1)
-    verify(viewMock, after(50).times(1)).showError("NotFoundException album with id 1 was not found")
+    verify(viewMock, after(50).times(1)).showError("Album 1 not found")
   }
 
   @Test

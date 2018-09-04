@@ -1,15 +1,15 @@
 package com.aragh.kotlin2.screen.useralbums
 
-import com.aragh.kotlin2.actors.GetUserAlbums
-import com.aragh.kotlin2.actors.PostUserAlbum
-import com.aragh.kotlin2.actors.UserAlbums
-import com.aragh.kotlin2.data.Album
-import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Unconfined
+import com.aragh.kotlin2.interactor.UserAlbums
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
+import kotlin.coroutines.experimental.CoroutineContext
 
 
-class UserAlbumsPresenter(private val userAlbums: UserAlbums) : Presenter {
+class UserAlbumsPresenter(private val userAlbums: UserAlbums,
+                          private val coroutineContext: CoroutineContext = UI) : Presenter {
 
   override var viewer: Viewer? = null
     set(value) {
@@ -19,11 +19,14 @@ class UserAlbumsPresenter(private val userAlbums: UserAlbums) : Presenter {
 
 
   override fun onStart(userId: Int) {
-    launch(Unconfined) {
-      val albumsDeferred = CompletableDeferred<List<Album>>()
-      userAlbums.userAlbumsActor.send(GetUserAlbums(userId, albumsDeferred))
-      albumsDeferred.invokeOnCompletion {
-        viewer?.showAlbums(albumsDeferred.getCompleted())
+    launch(this@UserAlbumsPresenter.coroutineContext) {
+      try {
+        val albums = withContext(CommonPool) {
+          userAlbums.getUserAlbums(userId)
+        }
+        viewer?.showAlbums(albums)
+      } catch (e: Exception) {
+        viewer?.showError(e.message)
       }
     }
   }
@@ -33,11 +36,15 @@ class UserAlbumsPresenter(private val userAlbums: UserAlbums) : Presenter {
   }
 
   override fun onAddAlbumClick(userId: Int) {
-    launch(Unconfined) {
-      val responseDeferred = CompletableDeferred<Album>()
-      userAlbums.userAlbumsActor.send(PostUserAlbum(userId, "new", responseDeferred))
-      val newAlbum = responseDeferred.await()
-      viewer?.appendAlbum(newAlbum) //will not add more than 1 since they are equal in DiffUtil
+    launch(this@UserAlbumsPresenter.coroutineContext) {
+      try {
+        val album = withContext(CommonPool) {
+          userAlbums.postUserAlbum(userId, "new")
+        }
+        viewer?.appendAlbum(album)
+      } catch (e: Exception) {
+        viewer?.showErrorSnackbar(e.message)
+      }
     }
   }
 }

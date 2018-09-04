@@ -44,7 +44,7 @@ class AlbumDetailsActivity : AppCompatActivity(), Viewer {
     titleTv.text = title
   }
 
-  override fun showError(msg: String) {
+  override fun showError(msg: String?) {
     titleTv.text = msg
   }
 
