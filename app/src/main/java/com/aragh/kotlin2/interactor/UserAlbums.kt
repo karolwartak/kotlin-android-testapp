@@ -9,7 +9,7 @@ class UserAlbums(private val userAlbumsApi: UserAlbumsApi) {
 
   private var count = 0
 
-  fun getUserAlbums(userId: Int) = userAlbumsApi.userAlbums(userId).get()
+  fun getUserAlbums(userId: Int): List<Album> = userAlbumsApi.userAlbums(userId).get()
 
   fun postUserAlbum(userId: Int, title: String) : Album {
     val newAlbum = userAlbumsApi.postAlbum(userId, NewAlbum(title)).get()

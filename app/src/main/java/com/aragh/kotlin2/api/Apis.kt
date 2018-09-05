@@ -21,6 +21,9 @@ interface UserAlbumsApi {
   @GET("/users/{id}/albums")
   fun userAlbums(@Path("id") userId: Int) : CompletableFuture<List<Album>>
 
+  /**
+   * Jsonplaceholder returns success but does not really create items
+   */
   @POST("/users/{id}/albums")
   fun postAlbum(@Path("id") userId: Int, @Body album: NewAlbum) : CompletableFuture<Response<Unit?>>
 }

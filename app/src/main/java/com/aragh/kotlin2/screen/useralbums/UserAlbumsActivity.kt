@@ -8,10 +8,8 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.view.ViewGroup
 import com.aragh.kotlin2.R
-import com.aragh.kotlin2.component.Adapter
-import com.aragh.kotlin2.component.ClickAction
+import com.aragh.kotlin2.component.RecyclerAdapter
 import com.aragh.kotlin2.component.ViewHolder
 import com.aragh.kotlin2.data.Album
 import com.aragh.kotlin2.extensions.inflate
@@ -35,8 +33,11 @@ class UserAlbumsActivity : AppCompatActivity(), ViewContract {
 
 
   private val presenter: PresenterContract by inject()
-  private val clickListener: ClickAction<Album> = { presenter.onAlbumClick(it.id) }
-  private val adapter = AlbumsAdapter(clickListener)
+  private val adapter = RecyclerAdapter(
+      AlbumDiffCallback(),
+      { parent, _ -> AlbumViewHolder(parent.inflate(R.layout.element_album)) },
+      { presenter.onAlbumClick(it.id) }
+  )
   private val userId: Int by lazy {
     intent.getIntExtra(USER_ID_EXTRA, 0)
   }
@@ -78,16 +79,6 @@ class UserAlbumsActivity : AppCompatActivity(), ViewContract {
     super.onStart()
     presenter.onStart(userId)
   }
-
-  override fun onStop() {
-    adapter.submitList(null)
-    super.onStop()
-  }
-
-  override fun onDestroy() {
-    presenter.view = null
-    super.onDestroy()
-  }
 }
 
 
@@ -100,10 +91,6 @@ class AlbumViewHolder(userView: View) : ViewHolder<Album>(userView) {
   }
 }
 
-class AlbumsAdapter(clickListener: (Album) -> Unit) : Adapter<Album>(AlbumDiffCallback(), clickListener) {
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-      AlbumViewHolder(parent.inflate(R.layout.element_album))
-}
 
 class AlbumDiffCallback : DiffUtil.ItemCallback<Album>() {
   override fun areItemsTheSame(oldItem: Album?, newItem: Album?) = oldItem?.id == newItem?.id

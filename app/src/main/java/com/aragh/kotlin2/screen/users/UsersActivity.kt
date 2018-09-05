@@ -5,10 +5,8 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.view.ViewGroup
 import com.aragh.kotlin2.R
-import com.aragh.kotlin2.component.Adapter
-import com.aragh.kotlin2.component.ClickAction
+import com.aragh.kotlin2.component.RecyclerAdapter
 import com.aragh.kotlin2.component.ViewHolder
 import com.aragh.kotlin2.data.User
 import com.aragh.kotlin2.extensions.inflate
@@ -20,8 +18,11 @@ import org.koin.android.ext.android.inject
 class UsersActivity : AppCompatActivity(), ViewContract {
 
   private val presenter: PresenterContract by inject()
-  private val clickListener: ClickAction<User> = { presenter.onUserClick(it.id) }
-  private val adapter = UsersAdapter(clickListener)
+  private val adapter = RecyclerAdapter(
+      UserDiffCallback(),
+      { parent, _ -> UserViewHolder(parent.inflate(R.layout.element_user)) },
+      { presenter.onUserClick(it.id) }
+  )
 
 
   override fun showUsers(users: List<User>) {
@@ -64,10 +65,6 @@ class UserViewHolder(userView: View) : ViewHolder<User>(userView) {
   }
 }
 
-class UsersAdapter(clickListener: (User) -> Unit) : Adapter<User>(UserDiffCallback(), clickListener) {
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-      UserViewHolder(parent.inflate(R.layout.element_user))
-}
 
 class UserDiffCallback : DiffUtil.ItemCallback<User>() {
   override fun areItemsTheSame(oldItem: User?, newItem: User?) = oldItem?.id == newItem?.id

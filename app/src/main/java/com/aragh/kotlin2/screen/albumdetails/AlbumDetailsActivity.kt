@@ -25,12 +25,12 @@ class AlbumDetailsActivity : AppCompatActivity(), ViewContract {
 
 
   private val presenter: PresenterContract by inject()
-  private val constraintStart: ConstraintSet by lazy {
+  private val constraintShrink: ConstraintSet by lazy {
     ConstraintSet().apply {
       clone(root)
     }
   }
-  private val constraintEnd: ConstraintSet by lazy {
+  private val constraintExpand: ConstraintSet by lazy {
     ConstraintSet().apply {
       clone(this@AlbumDetailsActivity, R.layout.activity_albumdetails_expanded)
     }
@@ -50,12 +50,12 @@ class AlbumDetailsActivity : AppCompatActivity(), ViewContract {
 
   override fun expandCover() {
     TransitionManager.beginDelayedTransition(root)
-    constraintEnd.applyTo(root)
+    constraintExpand.applyTo(root)
   }
 
   override fun shrinkCover() {
     TransitionManager.beginDelayedTransition(root)
-    constraintStart.applyTo(root)
+    constraintShrink.applyTo(root)
   }
 
 
@@ -69,11 +69,5 @@ class AlbumDetailsActivity : AppCompatActivity(), ViewContract {
   override fun onStart() {
     super.onStart()
     presenter.onStart(albumId)
-  }
-
-  override fun onDestroy() {
-    imageView.setOnClickListener(null)
-    presenter.view = null
-    super.onDestroy()
   }
 }
