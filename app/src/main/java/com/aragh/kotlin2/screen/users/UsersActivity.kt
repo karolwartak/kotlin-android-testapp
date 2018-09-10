@@ -15,9 +15,9 @@ import kotlinx.android.synthetic.main.activity_users.*
 import kotlinx.android.synthetic.main.element_user.view.*
 import org.koin.android.ext.android.inject
 
-class UsersActivity : AppCompatActivity(), ViewContract {
+class UsersActivity : AppCompatActivity(), UsersContract.View {
 
-  private val presenter: PresenterContract by inject()
+  private val presenter: UsersContract.Presenter by inject()
   private val adapter = RecyclerAdapter(
       UserDiffCallback(),
       { parent, _ -> UserViewHolder(parent.inflate(R.layout.element_user)) },

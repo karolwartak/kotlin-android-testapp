@@ -1,9 +1,9 @@
 package com.aragh.kotlin2.screen.useralbums
 
-import com.aragh.kotlin2.interactor.UserAlbums
 import com.aragh.kotlin2.api.UserAlbumsApi
 import com.aragh.kotlin2.data.Album
 import com.aragh.kotlin2.data.NewAlbum
+import com.aragh.kotlin2.interactor.UserAlbums
 import kotlinx.coroutines.experimental.Unconfined
 import okhttp3.Headers
 import org.junit.Before
@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture
 
 class UserAlbumsTest {
 
-  val viewMock = mock(ViewContract::class.java)
+  val viewMock = mock(UserAlbumsContract.View::class.java)
   val userAlbumsApi = mock(UserAlbumsApi::class.java)
   val userAlbums = UserAlbums(userAlbumsApi)
   val presenter = UserAlbumsPresenter(userAlbums, Unconfined)

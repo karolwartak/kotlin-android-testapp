@@ -8,9 +8,9 @@ import kotlin.coroutines.experimental.CoroutineContext
 
 class UserAlbumsPresenter(private val userAlbums: UserAlbums,
                           coroutineContext: CoroutineContext = UI)
-  : CoroutinePresenter(coroutineContext), PresenterContract {
+  : CoroutinePresenter(coroutineContext), UserAlbumsContract.Presenter {
 
-  override var view: ViewContract? = null
+  override var view: UserAlbumsContract.View? = null
     set(value) {
       field = value
       value?.showAlbums(emptyList())

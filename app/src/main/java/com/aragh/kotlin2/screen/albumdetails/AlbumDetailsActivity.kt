@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.activity_albumdetails.*
 import org.koin.android.ext.android.inject
 
 
-class AlbumDetailsActivity : AppCompatActivity(), ViewContract {
+class AlbumDetailsActivity : AppCompatActivity(), AlbumDetailsContract.View {
 
   companion object {
     private const val ALBUM_ID_EXTRA = "albumId"
@@ -24,7 +24,7 @@ class AlbumDetailsActivity : AppCompatActivity(), ViewContract {
   }
 
 
-  private val presenter: PresenterContract by inject()
+  private val presenter: AlbumDetailsContract.Presenter by inject()
   private val constraintShrink: ConstraintSet by lazy {
     ConstraintSet().apply {
       clone(root)

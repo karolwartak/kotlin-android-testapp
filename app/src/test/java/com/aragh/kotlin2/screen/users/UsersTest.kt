@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture
 
 class UsersTest {
 
-  val mockViewer = mock(ViewContract::class.java)
+  val mockViewer = mock(UsersContract.View::class.java)
   val usersApi = mock(UsersApi::class.java)
   val users = Users(usersApi)
   val presenter = UsersPresenter(users, Unconfined)

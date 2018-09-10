@@ -1,8 +1,8 @@
 package com.aragh.kotlin2.screen.albumdetails
 
-import com.aragh.kotlin2.interactor.Albums
 import com.aragh.kotlin2.api.AlbumsApi
 import com.aragh.kotlin2.data.Album
+import com.aragh.kotlin2.interactor.Albums
 import kotlinx.coroutines.experimental.Unconfined
 import org.junit.Before
 import org.junit.Test
@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture
 
 class AlbumDetailsTest {
 
-  val viewMock = mock(ViewContract::class.java)
+  val viewMock = mock(AlbumDetailsContract.View::class.java)
   val albumsApi = mock(AlbumsApi::class.java)
   val albums = Albums(albumsApi)
   val presenter = AlbumDetailsPresenter(albums, Unconfined)
@@ -41,7 +41,7 @@ class AlbumDetailsTest {
   fun errorGetsDisplayedOnException() {
     `when`(albumsApi.album(1)).thenAnswer { CompletableFuture<Album>().apply { completeExceptionally(RuntimeException()) } }
     presenter.onStart(1)
-    verify(viewMock, after(50).times(1)).showError("Album 1 not found")
+    verify(viewMock, after(50).times(1)).showError("album with id 1 was not found")
   }
 
   @Test

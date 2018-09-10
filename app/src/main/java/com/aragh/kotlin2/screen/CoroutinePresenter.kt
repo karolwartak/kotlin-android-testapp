@@ -10,8 +10,8 @@ import kotlin.coroutines.experimental.CoroutineContext
 open class CoroutinePresenter(private val coroutineContext: CoroutineContext = UI) {
 
   protected fun <T> runInCoroutine(operation: () -> T,
-                                   onSuccess: (T) -> Unit,
-                                   onFailure: (Exception) -> Unit) {
+                                   onSuccess: (T) -> Unit = {},
+                                   onFailure: (Exception) -> Unit = {}) {
     launch(this@CoroutinePresenter.coroutineContext) {
       try {
         val result = withContext(CommonPool) { operation() }

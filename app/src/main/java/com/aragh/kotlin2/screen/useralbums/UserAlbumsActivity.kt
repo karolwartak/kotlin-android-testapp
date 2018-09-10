@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.element_album.view.*
 import org.koin.android.ext.android.inject
 
 
-class UserAlbumsActivity : AppCompatActivity(), ViewContract {
+class UserAlbumsActivity : AppCompatActivity(), UserAlbumsContract.View {
 
   companion object {
     private const val USER_ID_EXTRA = "userId"
@@ -32,7 +32,7 @@ class UserAlbumsActivity : AppCompatActivity(), ViewContract {
   }
 
 
-  private val presenter: PresenterContract by inject()
+  private val presenter: UserAlbumsContract.Presenter by inject()
   private val adapter = RecyclerAdapter(
       AlbumDiffCallback(),
       { parent, _ -> AlbumViewHolder(parent.inflate(R.layout.element_album)) },

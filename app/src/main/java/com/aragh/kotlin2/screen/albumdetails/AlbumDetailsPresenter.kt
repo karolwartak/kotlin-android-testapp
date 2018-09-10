@@ -8,9 +8,9 @@ import kotlin.coroutines.experimental.CoroutineContext
 
 class AlbumDetailsPresenter(private val albums: Albums,
                             coroutineContext: CoroutineContext = UI)
-  : CoroutinePresenter(coroutineContext), PresenterContract {
+  : CoroutinePresenter(coroutineContext), AlbumDetailsContract.Presenter {
 
-  override var view: ViewContract? = null
+  override var view: AlbumDetailsContract.View? = null
     set(value) {
       field = value
       coverExpanded = false
@@ -24,7 +24,7 @@ class AlbumDetailsPresenter(private val albums: Albums,
     runInCoroutine(
         { albums.getAlbum(albumId) },
         { view?.showAlbum(it.title) },
-        { view?.showError("Album $albumId not found") }
+        { view?.showError(it.message) }
     )
   }
 

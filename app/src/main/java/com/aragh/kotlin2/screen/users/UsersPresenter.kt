@@ -8,9 +8,9 @@ import kotlin.coroutines.experimental.CoroutineContext
 
 class UsersPresenter(private val users: Users,
                      coroutineContext: CoroutineContext = UI)
-  : CoroutinePresenter(coroutineContext), PresenterContract {
+  : CoroutinePresenter(coroutineContext), UsersContract.Presenter {
 
-  override var view: ViewContract? = null
+  override var view: UsersContract.View? = null
     set(value) {
       field = value
       value?.showUsers(emptyList())
@@ -20,8 +20,7 @@ class UsersPresenter(private val users: Users,
   override fun onStart() {
     runInCoroutine(
         { users.getAllUsers() },
-        { view?.showUsers(it) },
-        {}
+        { view?.showUsers(it) }
     )
   }
 
