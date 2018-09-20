@@ -12,9 +12,9 @@ import com.aragh.kotlin2.screen.useralbums.UserAlbumsContract
 import com.aragh.kotlin2.screen.useralbums.UserAlbumsPresenter
 import com.aragh.kotlin2.screen.users.UsersContract
 import com.aragh.kotlin2.screen.users.UsersPresenter
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
 import org.koin.dsl.module.applicationContext
 import retrofit2.Retrofit
-import retrofit2.adapter.java8.Java8CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 
@@ -23,7 +23,7 @@ val usersModule = applicationContext {
     Retrofit.Builder()
         .baseUrl("https://jsonplaceholder.typicode.com")
         .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(Java8CallAdapterFactory.create())
+        .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
         .build()
   }
   bean { get<Retrofit>().create(UsersApi::class.java) }

@@ -3,10 +3,12 @@ package com.aragh.kotlin2.screen.albumdetails
 import com.aragh.kotlin2.api.AlbumsApi
 import com.aragh.kotlin2.data.Album
 import com.aragh.kotlin2.interactor.Albums
+import kotlinx.coroutines.experimental.CompletableDeferred
 import kotlinx.coroutines.experimental.Unconfined
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
+import java.lang.RuntimeException
 import java.util.concurrent.CompletableFuture
 
 
@@ -24,14 +26,14 @@ class AlbumDetailsTest {
 
   @Test
   fun albumIsLoaded() {
-    `when`(albumsApi.album(1)).thenReturn(CompletableFuture.completedFuture(Album(1, "title")))
+    `when`(albumsApi.album(1)).thenReturn(CompletableDeferred(Album(1, "title")))
     presenter.onStart(1)
     verify(viewMock, after(50).times(1)).showAlbum("title")
   }
 
   @Test
   fun coverIsShrinkedOnStart() {
-    `when`(albumsApi.album(1)).thenReturn(CompletableFuture.completedFuture(Album(1, "title")))
+    `when`(albumsApi.album(1)).thenReturn(CompletableDeferred(Album(1, "title")))
     presenter.onStart(1)
     assert(!presenter.coverExpanded)
     verify(viewMock, times(1)).shrinkCover()
@@ -39,7 +41,7 @@ class AlbumDetailsTest {
 
   @Test
   fun errorGetsDisplayedOnException() {
-    `when`(albumsApi.album(1)).thenAnswer { CompletableFuture<Album>().apply { completeExceptionally(RuntimeException()) } }
+    `when`(albumsApi.album(1)).thenAnswer { CompletableDeferred<Album>().apply { completeExceptionally(RuntimeException()) } }
     presenter.onStart(1)
     verify(viewMock, after(50).times(1)).showError("album with id 1 was not found")
   }
