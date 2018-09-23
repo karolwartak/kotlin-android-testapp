@@ -5,7 +5,7 @@ import com.aragh.kotlin2.data.Album
 import com.aragh.kotlin2.data.NewAlbum
 import com.aragh.kotlin2.interactor.UserAlbums
 import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.Dispatchers
 import okhttp3.Headers
 import org.junit.Before
 import org.junit.Test
@@ -19,7 +19,7 @@ class UserAlbumsTest {
   val viewMock = mock(UserAlbumsContract.View::class.java)
   val userAlbumsApi = mock(UserAlbumsApi::class.java)
   val userAlbums = UserAlbums(userAlbumsApi)
-  val presenter = UserAlbumsPresenter(userAlbums, Unconfined)
+  val presenter = UserAlbumsPresenter(userAlbums, Dispatchers.Unconfined)
 
 
   @Before

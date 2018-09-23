@@ -2,12 +2,13 @@ package com.aragh.kotlin2.screen.users
 
 import com.aragh.kotlin2.interactor.Users
 import com.aragh.kotlin2.screen.CoroutinePresenter
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.android.Main
 import kotlin.coroutines.experimental.CoroutineContext
 
 
 class UsersPresenter(private val users: Users,
-                     coroutineContext: CoroutineContext = UI)
+                     coroutineContext: CoroutineContext = Dispatchers.Main)
   : CoroutinePresenter(coroutineContext), UsersContract.Presenter {
 
   override var view: UsersContract.View? = null

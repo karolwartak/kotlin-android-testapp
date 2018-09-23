@@ -4,7 +4,7 @@ import com.aragh.kotlin2.api.UsersApi
 import com.aragh.kotlin2.data.User
 import com.aragh.kotlin2.interactor.Users
 import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.Dispatchers
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers
@@ -16,7 +16,7 @@ class UsersTest {
   val mockViewer = mock(UsersContract.View::class.java)
   val usersApi = mock(UsersApi::class.java)
   val users = Users(usersApi)
-  val presenter = UsersPresenter(users, Unconfined)
+  val presenter = UsersPresenter(users, Dispatchers.Unconfined)
 
 
   @Before

@@ -4,12 +4,10 @@ import com.aragh.kotlin2.api.AlbumsApi
 import com.aragh.kotlin2.data.Album
 import com.aragh.kotlin2.interactor.Albums
 import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.Dispatchers
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
-import java.lang.RuntimeException
-import java.util.concurrent.CompletableFuture
 
 
 class AlbumDetailsTest {
@@ -17,7 +15,7 @@ class AlbumDetailsTest {
   val viewMock = mock(AlbumDetailsContract.View::class.java)
   val albumsApi = mock(AlbumsApi::class.java)
   val albums = Albums(albumsApi)
-  val presenter = AlbumDetailsPresenter(albums, Unconfined)
+  val presenter = AlbumDetailsPresenter(albums, Dispatchers.Unconfined)
 
   @Before
   fun setupViewer() {

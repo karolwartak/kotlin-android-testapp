@@ -13,33 +13,33 @@ import com.aragh.kotlin2.screen.useralbums.UserAlbumsPresenter
 import com.aragh.kotlin2.screen.users.UsersContract
 import com.aragh.kotlin2.screen.users.UsersPresenter
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
-import org.koin.dsl.module.applicationContext
+import org.koin.dsl.module.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-val usersModule = applicationContext {
-  bean {
+val usersModule = module {
+  single {
     Retrofit.Builder()
         .baseUrl("https://jsonplaceholder.typicode.com")
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
         .build()
   }
-  bean { get<Retrofit>().create(UsersApi::class.java) }
-  bean { Users(get()) }
-  bean { get<Retrofit>().create(UserAlbumsApi::class.java) }
-  bean { UserAlbums(get()) }
-  bean { get<Retrofit>().create(AlbumsApi::class.java) }
-  bean { Albums(get()) }
+  single { get<Retrofit>().create(UsersApi::class.java) }
+  single { Users(get()) }
+  single { get<Retrofit>().create(UserAlbumsApi::class.java) }
+  single { UserAlbums(get()) }
+  single { get<Retrofit>().create(AlbumsApi::class.java) }
+  single { Albums(get()) }
 
-  context("albumDetails") {
-    bean<AlbumDetailsContract.Presenter> { AlbumDetailsPresenter(get()) }
+  module("albumDetails") {
+    factory<AlbumDetailsContract.Presenter> { AlbumDetailsPresenter(get()) }
   }
-  context("userAlbums") {
-    bean<UserAlbumsContract.Presenter> { UserAlbumsPresenter(get()) }
+  module("userAlbums") {
+    factory<UserAlbumsContract.Presenter> { UserAlbumsPresenter(get()) }
   }
-  context("users") {
-    bean<UsersContract.Presenter> { UsersPresenter(get()) }
+  module("users") {
+    factory<UsersContract.Presenter> { UsersPresenter(get()) }
   }
 }

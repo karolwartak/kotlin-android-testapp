@@ -2,13 +2,13 @@ package com.aragh.kotlin2.screen.useralbums
 
 import com.aragh.kotlin2.interactor.UserAlbums
 import com.aragh.kotlin2.screen.CoroutinePresenter
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.android.Main
 import kotlin.coroutines.experimental.CoroutineContext
 
 
 class UserAlbumsPresenter(private val userAlbums: UserAlbums,
-                          coroutineContext: CoroutineContext = UI)
+                          coroutineContext: CoroutineContext = Dispatchers.Main)
   : CoroutinePresenter(coroutineContext), UserAlbumsContract.Presenter {
 
   override var view: UserAlbumsContract.View? = null
