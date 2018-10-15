@@ -5,11 +5,29 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context=".screen.albums.AlbumsActivity">
+  tools:context=".screen.useralbums.UserAlbumsActivity">
 
   <android.support.v7.widget.RecyclerView
     android:id="@+id/recyclerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>
+
+  <TextView
+    android:id="@+id/errorTv"
+    android:textSize="30dp"
+    android:textColor="@android:color/holo_red_dark"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:text="Error"/>
+
+  <android.support.design.widget.FloatingActionButton
+    android:id="@+id/fab"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    android:src="@android:drawable/ic_input_add"
+    android:layout_margin="16dp" />
 
 </android.support.constraint.ConstraintLayout>

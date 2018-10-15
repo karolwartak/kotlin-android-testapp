@@ -20,8 +20,9 @@
       </intent-filter>
     </activity>
 
-    <activity android:name=".screen.albums.AlbumsActivity">
-    </activity>
+    <activity android:name=".screen.useralbums.UserAlbumsActivity"/>
+
+    <activity android:name=".screen.albumdetails.AlbumDetailsActivity"/>
   </application>
 
 </manifest>
